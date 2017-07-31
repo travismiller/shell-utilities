@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# @copyright 2017 Travis Miller <travis@travismiller.com>
+# @license https://opensource.org/licenses/MIT MIT
+# @link https://github.com/travismiller/shell-utilities/blob/master/source_safe
+
+################################################################################
+# Only source trusted files that have not been manipulated.
+#
+# Usage (source_safe):
+#
+#   $ source_safe 0000000000000000000000000000000000000000 .env.default
+#   .env.default: OK
+#
+# Usage (shasum):
+#
+#   $ shasum -p .env.default
+#   0000000000000000000000000000000000000000 ?.env.default
+#
+#   $ shasum -p -c <<< '0000000000000000000000000000000000000000 ?.env.default'
+#   .env.default: OK
+#
+#   $ shasum -p -c <<< "$(shasum -p .env.default)"
+#   .env.default: OK
+#
+#   $ shasum -p .env.default | shasum -p -c
+#   .env.default: OK
+#
+# @param $1 checksum
+# @param $2 path
+
+[[ -f "$2" ]] && shasum -p -c <<< "$1 ?$2" && source "$2"
